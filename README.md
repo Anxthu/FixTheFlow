@@ -1,47 +1,97 @@
-# Svelte + TS + Vite
+<div align="center">
+  <img src="public/icons/icon128.png" alt="FixTheFlow Logo" width="128"/>
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+  # FixTheFlow
+  **The privacy-first, beautifully designed screen recording extension.**
 
-## Recommended IDE Setup
+  [![Svelte](https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
+  [![CRXJS](https://img.shields.io/badge/CRXJS-1C1C1E?style=for-the-badge)](https://crxjs.dev/vite-plugin)
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+</div>
 
-## Need an official Svelte framework?
+---
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## 🌟 Overview
 
-## Technical considerations
+**FixTheFlow** is a modern Google Chrome extension built to capture frictionless screen recordings paired with microphone audio, without ever compromising user privacy. 
 
-**Why use this over SvelteKit?**
+Before hitting record, FixTheFlow's **Setup Mode** allows you to interactively blur and encrypt sensitive elements (like passwords, emails, and personal data) directly in the DOM. The resulting `.webm` video is processed 100% locally on your machine—your data never touches a cloud server unless you choose to share it.
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+Boasting a meticulous, Apple-inspired design system, FixTheFlow provides a floating frosted-glass toolbar, crisp typography, and an unobtrusive user experience.
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+---
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+## ✨ Features
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+- 🔒 **Client-Side Data Masking:** Interactively click on any DOM element (inputs, text, images) to blur it securely before the recording begins.
+- 🎙️ **Microphone Support:** Seamlessly capture tab audio and microphone voiceovers via Chrome's Offscreen Document API.
+- 🎨 **Apple Design System:** A pristine, photography-first UI featuring frosted glass `backdrop-filter` effects, crisp `SF Pro` typography, and satisfying micro-interactions.
+- 🛠️ **Floating Toolbar:** A draggable, unobtrusive control panel that stays out of your way while you demonstrate workflows.
+- 💾 **Local Processing:** No cloud uploads, no processing servers. Videos are generated locally as `.webm` files for immediate, secure download.
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+---
 
-**Why include `.vscode/extensions.json`?**
+## 💻 Tech Stack
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+- **Framework:** [Svelte 5](https://svelte.dev/blog/svelte-5-is-alive) for highly reactive, compiled UI components.
+- **Language:** [TypeScript](https://www.typescriptlang.org/) for robust, type-safe Chrome API interactions.
+- **Build Tool:** [Vite](https://vitejs.dev/) & [CRXJS](https://crxjs.dev/vite-plugin) for lightning-fast HMR and modern extension bundling.
+- **Icons:** [Lucide Svelte](https://lucide.dev/) for clean, consistent iconography.
 
-**Why enable `allowJs` in the TS template?**
+---
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+## 🚀 Installation (Development)
 
-**Why is HMR not preserving my local component state?**
+Since this extension is in active development, you will need to load it into Chrome as an **Unpacked Extension**.
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Anxthu/FixTheFlow.git
+   cd FixTheFlow
+   ```
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+3. **Build the extension:**
+   ```bash
+   npm run build
+   ```
+   *Note: For hot-module replacement (HMR) during active development, you can use `npm run dev`.*
+
+4. **Load into Chrome:**
+   - Open Google Chrome and navigate to `chrome://extensions/`.
+   - Enable **Developer mode** (toggle in the top right corner).
+   - Click **Load unpacked**.
+   - Select the `dist` folder generated inside the `FixTheFlow` directory.
+
+---
+
+## 📖 How to Use
+
+1. **Launch Setup:** Click the FixTheFlow extension icon in your Chrome toolbar.
+2. **Configure:** Toggle microphone access from the Pre-Setup Modal.
+3. **Mask Data:** During the "Setup" phase, click on any sensitive information on the web page. The extension will automatically apply a secure blur.
+4. **Record:** Click the red **Start Recording** button in the floating Setup Bar.
+5. **Control:** Use the draggable frosted-glass toolbar to toggle drawing modes or stop the recording.
+6. **Download:** Once stopped, a Friction Report overlay will appear, allowing you to instantly download your secure `.webm` file.
+
+---
+
+## 🎨 Design Philosophy
+
+FixTheFlow strictly adheres to a premium, Apple-inspired aesthetic (`DESIGN.md`):
+- **Typography:** Relies heavily on the `SF Pro Display` and `SF Pro Text` rhythm with negative letter-spacing for a tight, professional cadence.
+- **Color Palette:** Pure white canvases (`#ffffff`), off-white parchments (`#f5f5f7`), and stark contrast inks (`#1d1d1f`).
+- **Interactive Elements:** Universal "Action Blue" (`#0066cc`) for primary actions, with destructive or recording actions utilizing a stark Red (`#ff3b30`).
+- **Elevation:** Flat design with hairline borders (`#e0e0e0`) and heavy reliance on CSS `backdrop-filter: blur(20px)` for floating elements.
+
+---
+
+<div align="center">
+  <i>Built with ❤️ for frictionless, secure workflows.</i>
+</div>
