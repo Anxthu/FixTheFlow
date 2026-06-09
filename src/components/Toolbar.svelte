@@ -113,24 +113,26 @@
     transform: translateX(-50%);
     z-index: 2147483647;
     pointer-events: none;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
   }
 
   .toolbar {
-    background-color: #121215;
-    border: 1px solid #2A2A32;
-    border-radius: 100px;
+    background: rgba(245, 245, 247, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid #e0e0e0;
+    border-radius: 9999px;
     padding: 8px 12px 8px 8px;
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     pointer-events: auto;
   }
 
   .drag-handle {
     cursor: grab;
-    color: #8E8E93;
+    color: #7a7a7a;
     display: flex;
     align-items: center;
     padding: 4px;
@@ -148,17 +150,17 @@
   .grip-dot {
     width: 3px;
     height: 3px;
-    background-color: #8E8E93;
+    background-color: #7a7a7a;
     border-radius: 50%;
     transition: background-color 0.2s;
   }
 
   .drag-handle:hover {
-    background: #2A2A32;
+    background: #e8e8ed;
   }
 
   .drag-handle:hover .grip-dot {
-    background-color: #F5F5F7;
+    background-color: #1d1d1f;
   }
 
   .drag-handle:active {
@@ -169,23 +171,24 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #F5F5F7;
+    color: #1d1d1f;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
+    letter-spacing: -0.224px;
   }
 
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #FF3B30;
+    background-color: #0066cc; /* Subdued primary blue indicator */
     animation: pulse 1.5s infinite;
   }
 
   .divider {
     width: 1px;
     height: 16px;
-    background-color: #2A2A32;
+    background-color: #e0e0e0;
   }
 
   .draw-btn {
@@ -193,7 +196,7 @@
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: #8E8E93;
+    color: #7a7a7a;
     border: none;
     cursor: pointer;
     padding: 6px;
@@ -202,32 +205,33 @@
   }
 
   .draw-btn:hover {
-    background: #2A2A32;
-    color: #F5F5F7;
+    background: #e8e8ed;
+    color: #1d1d1f;
   }
 
   .draw-btn.active {
-    background: rgba(0, 122, 255, 0.15);
-    color: #007AFF;
+    background: rgba(0, 102, 204, 0.1);
+    color: #0066cc;
   }
 
   .stop-btn {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: transparent;
-    color: #FF3B30;
+    background: #ff3b30;
+    color: #ffffff;
     border: none;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 100px;
-    transition: background 0.2s;
+    font-weight: 400;
+    letter-spacing: -0.224px;
+    padding: 8px 15px;
+    border-radius: 9999px;
+    transition: transform 0.15s ease;
   }
 
-  .stop-btn:hover {
-    background: rgba(255, 59, 48, 0.1);
+  .stop-btn:active {
+    transform: scale(0.95);
   }
 
   @keyframes pulse {

@@ -41,18 +41,20 @@
     z-index: 2147483647;
     pointer-events: none;
     animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
   }
 
   .setup-bar {
-    background: #000000;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 100px;
+    background: rgba(245, 245, 247, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid #e0e0e0;
+    border-radius: 9999px;
     padding: 8px 10px 8px 24px;
     display: flex;
     align-items: center;
     gap: 24px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     pointer-events: auto;
   }
 
@@ -65,19 +67,21 @@
   .app-logo {
     width: 24px;
     height: 24px;
+    /* Optional: Since it's a white theme now, if the SVG is white, we might need to invert or use a dark version. 
+       Assuming SVG handles itself or has colors. */
   }
 
   .status-badge {
     display: flex;
     align-items: center;
-    background: #1A1A1A;
+    background: transparent;
     padding: 4px 10px;
-    border-radius: 100px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    border: 1px solid #e0e0e0;
   }
 
   .status-badge span {
-    color: #A1A1AA;
+    color: #1d1d1f;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -85,14 +89,14 @@
   }
 
   .pulse-dot {
-    display: none; /* Removed the glowing dot entirely */
+    display: none;
   }
 
   .instructions {
-    color: #E4E4E7;
+    color: #1d1d1f;
     font-size: 14px;
-    font-weight: 500;
-    letter-spacing: -0.2px;
+    font-weight: 400;
+    letter-spacing: -0.224px;
   }
 
   .actions {
@@ -102,8 +106,8 @@
   }
 
   .close-btn {
-    background: transparent;
-    color: #71717A;
+    background: #f5f5f7;
+    color: #1d1d1f;
     border: none;
     cursor: pointer;
     display: flex;
@@ -111,40 +115,35 @@
     justify-content: center;
     padding: 8px;
     border-radius: 50%;
-    transition: color 0.15s, background 0.15s;
+    transition: background 0.15s ease;
   }
 
   .close-btn:hover {
-    color: #FFFFFF;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e8e8ed;
   }
 
   .start-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(180deg, #FF453A 0%, #FF3B30 100%);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ff3b30;
+    color: #ffffff;
+    border: none;
     cursor: pointer;
     font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    padding: 10px 20px;
-    border-radius: 100px;
-    box-shadow: 0 4px 16px rgba(255, 59, 48, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    font-weight: 400;
+    letter-spacing: -0.224px;
+    padding: 11px 22px;
+    border-radius: 9999px;
+    transition: transform 0.15s ease;
   }
 
   .start-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(255, 59, 48, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    background: linear-gradient(180deg, #FF5147 0%, #FF453A 100%);
+    /* No color change on hover */
   }
   
   .start-btn:active {
-    transform: scale(0.98);
-    box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+    transform: scale(0.95);
   }
 
   @keyframes slideDown {

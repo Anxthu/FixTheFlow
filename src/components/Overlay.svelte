@@ -6,6 +6,7 @@
 
   let videoUrl = $derived(URL.createObjectURL(videoBlob));
   let isExiting = $state(false);
+  let isDownloaded = $state(false);
 
   function handleClose() {
     isExiting = true;
@@ -21,7 +22,7 @@
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    handleClose();
+    isDownloaded = true;
   }
 </script>
 
@@ -50,29 +51,25 @@
     </div>
 
     <div class="actions">
-      <button class="btn btn-secondary" onclick={handleClose}>
-        Discard (Esc)
-      </button>
-      <button class="btn btn-primary" onclick={handleDownload}>
-        <Download size={16} />
-        Download .webm
-      </button>
+      {#if !isDownloaded}
+        <button class="btn btn-secondary" onclick={handleClose}>
+          Discard (Esc)
+        </button>
+        <button class="btn btn-primary" onclick={handleDownload}>
+          <Download size={16} />
+          Download .webm
+        </button>
+      {:else}
+        <button class="btn btn-primary" onclick={handleClose}>
+          Exit FixTheFlow
+        </button>
+      {/if}
     </div>
   </div>
 </div>
 
 <style>
-  :global(#fixtheflow-root) {
-    --sys-bg-base: #0A0A0C;
-    --sys-surface-elevation-1: #121215;
-    --sys-surface-elevation-2: #1C1C21;
-    --sys-border-subtle: #2A2A32;
-    --sys-text-primary: #F5F5F7;
-    --sys-text-secondary: #8E8E93;
-    --sys-brand-accent: #007AFF;
-    --sys-brand-success: #34C759;
-    --sys-font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
+
 
   .overlay-container {
     position: fixed;
@@ -83,11 +80,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: auto; /* Re-enable pointer events for the overlay */
-    background: rgba(10, 10, 12, 0.4);
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     animation: fadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-family: var(--sys-font-main);
+    font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
   }
 
   .overlay-container.exiting {
@@ -95,36 +93,34 @@
   }
 
   .card {
-    width: 380px;
-    background-color: var(--sys-surface-elevation-1);
-    border-radius: 20px;
-    border: 1px solid var(--sys-border-subtle);
-    padding: 16px;
-    box-shadow: 
-      0 1px 2px rgba(0, 0, 0, 0.3), 
-      0 12px 24px -4px rgba(0, 0, 0, 0.5), 
-      inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    color: var(--sys-text-primary);
+    width: 440px;
+    background-color: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #e0e0e0;
+    padding: 24px;
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
+    color: #1d1d1f;
   }
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 
   .title {
-    font-size: 16px;
+    font-family: "SF Pro Display", system-ui, -apple-system, sans-serif;
+    font-size: 24px;
     font-weight: 600;
     margin: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.374px;
   }
 
   .close-btn {
     background: transparent;
     border: none;
-    color: var(--sys-text-secondary);
+    color: #7a7a7a;
     cursor: pointer;
     border-radius: 50%;
     padding: 4px;
@@ -135,8 +131,8 @@
   }
 
   .close-btn:hover {
-    background: var(--sys-surface-elevation-2);
-    color: var(--sys-text-primary);
+    background: #f5f5f7;
+    color: #1d1d1f;
   }
 
   .video-container {
@@ -144,8 +140,8 @@
     border-radius: 12px;
     overflow: hidden;
     background: #000;
-    border: 1px solid var(--sys-border-subtle);
-    margin-bottom: 16px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 24px;
     aspect-ratio: 16/9;
   }
 
@@ -156,28 +152,30 @@
   }
 
   .status-panel {
-    background: var(--sys-surface-elevation-2);
+    background: #f5f5f7;
     border-radius: 12px;
-    padding: 12px;
+    padding: 16px;
     margin-bottom: 24px;
-    border: 1px solid var(--sys-border-subtle);
+    border: 1px solid transparent;
   }
 
   .status-badge {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--sys-brand-success);
-    font-weight: 500;
-    font-size: 13px;
+    color: #1d1d1f;
+    font-weight: 600;
+    font-size: 14px;
     margin-bottom: 6px;
+    letter-spacing: -0.224px;
   }
 
   .status-desc {
-    font-size: 13px;
-    color: var(--sys-text-secondary);
-    line-height: 1.4;
+    font-size: 14px;
+    color: #7a7a7a;
+    line-height: 1.43;
     margin: 0;
+    letter-spacing: -0.224px;
   }
 
   .actions {
@@ -191,33 +189,37 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: 40px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 500;
+    padding: 11px 22px;
+    border-radius: 9999px;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.374px;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: transform 0.15s ease, background 0.15s ease;
   }
 
   .btn-secondary {
     background: transparent;
-    color: var(--sys-text-primary);
-    border: 1px solid var(--sys-border-subtle);
+    color: #0066cc;
+    border: 1px solid #0066cc;
   }
 
   .btn-secondary:hover {
-    background: var(--sys-surface-elevation-2);
+    background: rgba(0, 102, 204, 0.05);
+  }
+  
+  .btn-secondary:active {
+    transform: scale(0.95);
   }
 
   .btn-primary {
-    background: var(--sys-brand-accent);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    background: #0066cc;
+    color: #ffffff;
   }
 
-  .btn-primary:hover {
-    filter: brightness(1.1);
+  .btn-primary:active {
+    transform: scale(0.95);
   }
 
   @keyframes fadeIn {

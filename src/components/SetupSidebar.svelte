@@ -51,15 +51,15 @@
     right: 24px;
     width: 280px;
     max-height: calc(100vh - 48px);
-    background-color: #121215;
-    border: 1px solid #2A2A32;
-    border-radius: 16px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
     z-index: 2147483647;
     display: flex;
     flex-direction: column;
     pointer-events: auto;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
     animation: slideInRight 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
   }
@@ -69,15 +69,16 @@
     align-items: center;
     gap: 8px;
     padding: 16px;
-    background: #1C1C21;
-    border-bottom: 1px solid #2A2A32;
-    color: #F5F5F7;
+    background: #f5f5f7;
+    border-bottom: 1px solid #e0e0e0;
+    color: #1d1d1f;
   }
 
   .sidebar-header h3 {
     margin: 0;
     font-size: 14px;
     font-weight: 600;
+    letter-spacing: -0.224px;
   }
 
   .mask-list {
@@ -101,12 +102,13 @@
   }
 
   .mask-item:hover {
-    background: #2A2A32;
+    background: #f5f5f7;
   }
 
   .mask-name {
-    color: #E5E5EA;
-    font-size: 13px;
+    color: #1d1d1f;
+    font-size: 14px;
+    letter-spacing: -0.224px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -116,7 +118,7 @@
   .undo-btn {
     background: transparent;
     border: none;
-    color: #8E8E93;
+    color: #7a7a7a;
     cursor: pointer;
     padding: 6px;
     border-radius: 6px;
@@ -127,8 +129,8 @@
   }
 
   .undo-btn:hover {
-    background: rgba(255, 59, 48, 0.15);
-    color: #FF3B30;
+    background: #e8e8ed;
+    color: #1d1d1f;
   }
 
   @keyframes slideInRight {
@@ -143,10 +145,10 @@
     background: transparent;
   }
   .mask-list::-webkit-scrollbar-thumb {
-    background: #2A2A32;
+    background: #e0e0e0;
     border-radius: 3px;
   }
   .mask-list::-webkit-scrollbar-thumb:hover {
-    background: #3A3A42;
+    background: #cccccc;
   }
 </style>

@@ -1,4 +1,5 @@
 import { mount, unmount } from 'svelte';
+import PreSetupModal from './components/PreSetupModal.svelte';
 import Overlay from './components/Overlay.svelte';
 import Toolbar from './components/Toolbar.svelte';
 import SetupBar from './components/SetupBar.svelte';
@@ -26,6 +27,11 @@ let setupBarComponent: any = null;
 let setupSidebarContainer: HTMLElement | null = null;
 let setupSidebarComponent: any = null;
 
+let preSetupModalContainer: HTMLElement | null = null;
+let preSetupModalComponent: any = null;
+let highlightClicksEnabled = false;
+let currentConfig: any = null;
+
 let drawingCanvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
 let isDrawingMode = false;
@@ -50,10 +56,17 @@ styleTag.innerHTML = `
 `;
 document.head.appendChild(styleTag);
 
-chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
+chrome.runtime.onMessage.addListener(async (message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
+  if (message.action === 'SHOW_PRE_SETUP_MODAL') {
+    showPreSetupModal();
+  }
+
   if (message.action === 'ENTER_SETUP') {
     if (isSetupMode || recording) return;
     isSetupMode = true;
+    
+    currentConfig = message.config || {};
+    highlightClicksEnabled = !!currentConfig.useClicks;
     
     // Auto blur fields
     applyAutoMasks();
@@ -74,8 +87,11 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
     
     showToolbar();
     setupDrawingCanvas();
+    if (highlightClicksEnabled) {
+      window.addEventListener('mousedown', handleRippleClick);
+    }
     
-    chrome.runtime.sendMessage({ action: 'MASKS_APPLIED' });
+    chrome.runtime.sendMessage({ action: 'MASKS_APPLIED', config: currentConfig });
   }
 
   if (message.action === 'EXIT_SETUP') {
@@ -85,6 +101,7 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
     disableManualMasking();
     hideSetupBar();
     cleanupMasks();
+    window.removeEventListener('mousedown', handleRippleClick);
   }
 
   if (message.action === 'SHOW_OVERLAY') {
@@ -92,6 +109,7 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
     cleanupMasks();
     hideToolbar();
     teardownDrawingCanvas();
+    window.removeEventListener('mousedown', handleRippleClick);
     
     const videoBase64 = message.videoBase64;
     fetch(videoBase64)
@@ -102,6 +120,10 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
       .catch(err => {
         console.error("Failed to decode video blob", err);
       });
+  }
+
+  if (message.action === 'MIC_FAILED') {
+    alert(`FixTheFlow: Could not activate microphone.\nReason: ${message.error}\n\nThe recording will continue without sound.`);
   }
 });
 
@@ -401,4 +423,54 @@ function showOverlay(videoBlob: Blob, maskedCount: number) {
     target: container,
     props: { videoBlob, maskedCount }
   });
+}
+
+// -- Pre-Setup & Camera Logic --
+function showPreSetupModal() {
+  if (preSetupModalContainer) return;
+  preSetupModalContainer = document.createElement('div');
+  preSetupModalContainer.id = 'fixtheflow-presetup-modal';
+  document.body.appendChild(preSetupModalContainer);
+  preSetupModalComponent = mount(PreSetupModal, { target: preSetupModalContainer! });
+}
+
+function hidePreSetupModal() {
+  if (preSetupModalComponent) unmount(preSetupModalComponent);
+  if (preSetupModalContainer) preSetupModalContainer.remove();
+  preSetupModalComponent = null;
+  preSetupModalContainer = null;
+}
+
+window.addEventListener('FIXTHEFLOW_PRE_SETUP_DONE', ((e: CustomEvent) => {
+  hidePreSetupModal();
+  chrome.runtime.sendMessage({ action: 'ENTER_SETUP_PHASE', config: e.detail });
+}) as EventListener);
+
+// -- Ripple Logic --
+function handleRippleClick(e: MouseEvent) {
+  if (!recording || isDrawingMode) return;
+  
+  const ripple = document.createElement('div');
+  ripple.style.position = 'fixed';
+  ripple.style.left = `${e.clientX - 20}px`;
+  ripple.style.top = `${e.clientY - 20}px`;
+  ripple.style.width = '40px';
+  ripple.style.height = '40px';
+  ripple.style.borderRadius = '50%';
+  ripple.style.backgroundColor = 'rgba(255, 59, 48, 0.4)';
+  ripple.style.border = '2px solid rgba(255, 59, 48, 0.8)';
+  ripple.style.zIndex = '2147483647';
+  ripple.style.pointerEvents = 'none';
+  ripple.style.transform = 'scale(0.5)';
+  ripple.style.opacity = '1';
+  ripple.style.transition = 'transform 0.4s ease-out, opacity 0.4s ease-out';
+  
+  document.body.appendChild(ripple);
+  
+  requestAnimationFrame(() => {
+    ripple.style.transform = 'scale(2)';
+    ripple.style.opacity = '0';
+  });
+  
+  setTimeout(() => ripple.remove(), 400);
 }

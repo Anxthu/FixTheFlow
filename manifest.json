@@ -7,7 +7,8 @@
     "activeTab",
     "scripting",
     "tabCapture",
-    "offscreen"
+    "offscreen",
+    "storage"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -17,13 +18,14 @@
     "type": "module"
   },
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "action": {
     "default_title": "Capture UI Friction",
-    "default_icon": "icon128.png"
+    "default_icon": "icons/icon128.png"
   },
   "content_scripts": [
     {
@@ -33,7 +35,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["fixtheeflowsvg.svg"],
+      "resources": ["fixtheeflowsvg.svg", "src/permissions.html"],
       "matches": ["<all_urls>"]
     }
   ],

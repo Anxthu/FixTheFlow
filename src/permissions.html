@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FixTheFlow - Grant Permissions</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+      background: #0A0A0C;
+      color: #FFFFFF;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    h2 { margin: 0 0 10px 0; font-size: 20px; }
+    p { margin: 0 0 20px 0; color: #A1A1AA; font-size: 14px; line-height: 1.5; max-width: 300px; }
+    #status { margin-top: 12px; font-size: 13px; min-height: 20px; }
+    .icon { width: 48px; height: 48px; margin-bottom: 20px; }
+    .pulse {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: rgba(0, 122, 255, 0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.4); }
+      70% { box-shadow: 0 0 0 20px rgba(0, 122, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 122, 255, 0); }
+    }
+    #grant-btn {
+      background: #007AFF; color: white; border: none;
+      padding: 12px 24px; border-radius: 8px;
+      font-size: 16px; cursor: pointer; font-weight: bold;
+      margin-top: 10px; transition: background 0.2s;
+    }
+    #grant-btn:hover { background: #0066DD; }
+    #grant-btn:disabled { background: #333; cursor: wait; }
+  </style>
+</head>
+<body>
+  <div class="pulse">
+    <img src="/fixtheeflowsvg.svg" class="icon" />
+  </div>
+  <h2>Permission Required</h2>
+  <p>FixTheFlow needs microphone access so your voice is captured in the screen recording. Click the button below.</p>
+  <div style="background: rgba(255, 179, 64, 0.1); border: 1px solid #FFB340; border-radius: 8px; padding: 12px; margin-bottom: 20px; max-width: 320px;">
+    <p style="color: #FFB340; font-weight: bold; margin: 0; font-size: 13px;">⚠️ CRITICAL: When Chrome asks, you MUST select "Allow on every visit".</p>
+    <p style="color: #FFB340; margin: 8px 0 0 0; font-size: 12px;">If you select "Allow this time", Chrome will instantly kill the microphone as soon as this window closes!</p>
+  </div>
+  <button id="grant-btn">Grant Microphone Access</button>
+  <div id="status"></div>
+  <script type="module" src="/src/permissions.ts"></script>
+</body>
+</html>
