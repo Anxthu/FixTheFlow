@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128">
+  <defs>
+    <!-- Premium Apple HIG-style subtle gradient -->
+    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5F5F7" />
+      <stop offset="100%" stop-color="#8E8E93" />
+    </linearGradient>
+    
+    <!-- Tactile Specular Drop Shadow -->
+    <filter id="elevationShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Base App Icon Container (Deep Dark Mode) -->
+  <rect width="128" height="128" rx="28" fill="#0A0A0C" stroke="#2A2A32" stroke-width="2"/>
+
+  <!-- Background Structural 8dp Grid (Google Material Logic) -->
+  <g stroke="#1C1C21" stroke-width="1" stroke-dasharray="2 4">
+    <line x1="32" y1="0" x2="32" y2="128" />
+    <line x1="64" y1="0" x2="64" y2="128" />
+    <line x1="96" y1="0" x2="96" y2="128" />
+    <line x1="0" y1="32" x2="128" y2="32" />
+    <line x1="0" y1="64" x2="128" y2="64" />
+    <line x1="0" y1="96" x2="128" y2="96" />
+  </g>
+
+  <!-- Central Emblem: The "Masked Flow" -->
+  <!-- Brutalist continuous path representing the broken UI being tracked -->
+  <path d="M 36 84 L 36 44 L 64 44 L 64 64 L 92 64 L 92 84" 
+        fill="none" 
+        stroke="url(#iconGradient)" 
+        stroke-width="8" 
+        stroke-linecap="square" 
+        stroke-linejoin="miter"
+        filter="url(#elevationShadow)"/>
+
+  <!-- The Privacy Block: A crisp, colored mask representing the auto-blur -->
+  <rect x="60" y="40" width="16" height="16" rx="4" fill="#007AFF" />
+</svg>

@@ -78,6 +78,15 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
     chrome.runtime.sendMessage({ action: 'MASKS_APPLIED' });
   }
 
+  if (message.action === 'EXIT_SETUP') {
+    isSetupMode = false;
+    recording = false;
+    
+    disableManualMasking();
+    hideSetupBar();
+    cleanupMasks();
+  }
+
   if (message.action === 'SHOW_OVERLAY') {
     recording = false;
     cleanupMasks();
@@ -195,18 +204,18 @@ function broadcastMasks() {
   window.dispatchEvent(new CustomEvent('FIXTHEFLOW_MASKS_UPDATED', { detail: { masks: safeMasks } }));
 }
 
-window.addEventListener('FIXTHEFLOW_UNDO_MASK', (e: any) => {
+window.addEventListener('FIXTHEFLOW_UNDO_MASK', ((e: CustomEvent) => {
   const id = e.detail.id;
   const index = masks.findIndex(m => m.id === id);
   if (index !== -1) {
     const mask = masks[index];
     mask.maskDiv.remove();
-    delete mask.originalElement.dataset.fixtheflowMasked;
+    mask.originalElement.removeAttribute('data-fixtheflow-masked');
     masks.splice(index, 1);
     currentMaskedCount = masks.length;
     broadcastMasks();
   }
-});
+}) as EventListener);
 
 function applyAutoMasks() {
   const selectors = [
@@ -329,7 +338,7 @@ function cleanupMasks() {
   masks = [];
   currentMaskedCount = 0;
   document.querySelectorAll('[data-fixtheflow-masked]').forEach(el => {
-    delete (el as HTMLElement).dataset.fixtheflowMasked;
+    (el as HTMLElement).removeAttribute('data-fixtheflow-masked');
   });
 }
 
@@ -338,12 +347,12 @@ function showSetupBar() {
   setupBarContainer = document.createElement('div');
   setupBarContainer.id = 'fixtheflow-setup-bar';
   document.body.appendChild(setupBarContainer);
-  setupBarComponent = mount(SetupBar, { target: setupBarContainer });
+  setupBarComponent = mount(SetupBar, { target: setupBarContainer! });
 
   setupSidebarContainer = document.createElement('div');
   setupSidebarContainer.id = 'fixtheflow-setup-sidebar';
   document.body.appendChild(setupSidebarContainer);
-  setupSidebarComponent = mount(SetupSidebar, { target: setupSidebarContainer });
+  setupSidebarComponent = mount(SetupSidebar, { target: setupSidebarContainer! });
   
   // Send initial masks to Sidebar
   broadcastMasks();
@@ -366,7 +375,7 @@ function showToolbar() {
   toolbarContainer.id = 'fixtheflow-toolbar';
   document.body.appendChild(toolbarContainer);
 
-  toolbarComponent = mount(Toolbar, { target: toolbarContainer });
+  toolbarComponent = mount(Toolbar, { target: toolbarContainer! });
 }
 
 function hideToolbar() {

@@ -56,6 +56,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
   }
 
+  // Setup Bar requested to cancel
+  if (message.action === 'CANCEL_SETUP') {
+    isSetupMode = false;
+    isRecording = false;
+    if (activeTabId) {
+      chrome.tabs.sendMessage(activeTabId, { action: 'EXIT_SETUP' }).catch(() => {});
+      activeTabId = null;
+    }
+  }
+
   // Content script finished preparing for recording
   if (message.action === 'MASKS_APPLIED' && sender.tab?.id === activeTabId) {
     chrome.tabCapture.getMediaStreamId({ targetTabId: activeTabId }, async (streamId: string) => {
