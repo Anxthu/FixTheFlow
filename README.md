@@ -1,97 +1,82 @@
 <div align="center">
-  <img src="public/icons/icon128.png" alt="FixTheFlow Logo" width="128"/>
+  <img src="public/icons/icon128.png" alt="FixTheFlow Logo" width="128" style="border-radius: 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.1); margin-bottom: 24px;"/>
 
   # FixTheFlow
-  **The privacy-first, beautifully designed screen recording extension.**
+  **A high-fidelity, privacy-first screen recording utility.**
 
-  [![Svelte](https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)](https://svelte.dev/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-  [![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-  [![CRXJS](https://img.shields.io/badge/CRXJS-1C1C1E?style=for-the-badge)](https://crxjs.dev/vite-plugin)
+  <p align="center">
+    Built at the intersection of rigorous design systems and modern web architecture.
+  </p>
 
 </div>
 
 ---
 
-## 🌟 Overview
+## ✦ The Vision
 
-**FixTheFlow** is a modern Google Chrome extension built to capture frictionless screen recordings paired with microphone audio, without ever compromising user privacy. 
+FixTheFlow was designed to solve a fundamental UX problem: **demonstrating workflows without compromising sensitive data.** 
 
-Before hitting record, FixTheFlow's **Setup Mode** allows you to interactively blur and encrypt sensitive elements (like passwords, emails, and personal data) directly in the DOM. The resulting `.webm` video is processed 100% locally on your machine—your data never touches a cloud server unless you choose to share it.
+As design engineers, we believe that privacy shouldn't come at the cost of friction. FixTheFlow replaces clunky post-production editing with an elegant, client-side encryption flow. We intercept the DOM prior to recording, allowing users to interactively mask sensitive nodes (inputs, text, imagery) directly on the canvas. 
 
-Boasting a meticulous, Apple-inspired design system, FixTheFlow provides a floating frosted-glass toolbar, crisp typography, and an unobtrusive user experience.
-
----
-
-## ✨ Features
-
-- 🔒 **Client-Side Data Masking:** Interactively click on any DOM element (inputs, text, images) to blur it securely before the recording begins.
-- 🎙️ **Microphone Support:** Seamlessly capture tab audio and microphone voiceovers via Chrome's Offscreen Document API.
-- 🎨 **Apple Design System:** A pristine, photography-first UI featuring frosted glass `backdrop-filter` effects, crisp `SF Pro` typography, and satisfying micro-interactions.
-- 🛠️ **Floating Toolbar:** A draggable, unobtrusive control panel that stays out of your way while you demonstrate workflows.
-- 💾 **Local Processing:** No cloud uploads, no processing servers. Videos are generated locally as `.webm` files for immediate, secure download.
+The result is a `.webm` artifact that is processed entirely locally, maintaining strict data sovereignty while delivering a frictionless user experience.
 
 ---
 
-## 💻 Tech Stack
+## ✦ Design System & Craft
 
-- **Framework:** [Svelte 5](https://svelte.dev/blog/svelte-5-is-alive) for highly reactive, compiled UI components.
-- **Language:** [TypeScript](https://www.typescriptlang.org/) for robust, type-safe Chrome API interactions.
-- **Build Tool:** [Vite](https://vitejs.dev/) & [CRXJS](https://crxjs.dev/vite-plugin) for lightning-fast HMR and modern extension bundling.
-- **Icons:** [Lucide Svelte](https://lucide.dev/) for clean, consistent iconography.
+Our UI architecture strictly adheres to a premium, photography-first aesthetic, heavily inspired by Apple's Human Interface Guidelines. We prioritize content over chrome, utilizing negative space, stark contrast, and intentional typography to guide the user's eye.
+
+### Typography & Rhythm
+- **Primary Typefaces:** We rely on the `SF Pro Display` and `SF Pro Text` families, gracefully degrading to `system-ui`.
+- **Micro-Typography:** We apply rigorous negative tracking (`-0.374px` to `-0.224px`) to achieve the signature "tight" cadence of modern premium interfaces.
+
+### Color & Elevation Tokens
+- **Canvas & Ink:** The application utilizes a stark juxtaposition of pure white (`#ffffff`) surfaces against near-black (`#1d1d1f`) typography for maximum legibility.
+- **Action Blue:** To eliminate cognitive overload, we enforce a monochromatic interaction paradigm. Every primary interactive surface utilizes a singular, distinct Action Blue (`#0066cc`).
+- **Destructive/Recording Actions:** Context-heavy states (like actively recording) are immediately communicated via a stark Action Red (`#ff3b30`).
+- **Materiality:** Floating utility bars leverage deep `backdrop-filter: blur(20px)` properties over an 80% opacity parchment canvas (`#f5f5f7`), ensuring they maintain context without obscuring the underlying workflow.
+
+### Motion & Micro-Interactions
+- We reject abrupt state changes. Elements enter the viewport via cubic-bezier `slideUp` and `fadeIn` orchestrations.
+- Buttons utilize a physical `scale(0.95)` depress animation on the active state rather than hover color shifts, grounding the interface in digital materiality.
 
 ---
 
-## 🚀 Installation (Development)
+## ✦ Technical Architecture
 
-Since this extension is in active development, you will need to load it into Chrome as an **Unpacked Extension**.
+FixTheFlow is engineered to be as performant as it is beautiful. 
 
-1. **Clone the repository:**
+- **State Management:** Driven by **Svelte 5's** surgical reactivity (`$state`, `$derived`), ensuring zero dropped frames when interacting with the DOM mask overlays.
+- **Extension API:** Deep integration with Chrome's `Offscreen Document API` to reliably mux tab video streams with hardware microphone inputs.
+- **Tooling:** Bundled via **Vite** and **CRXJS**, providing sub-second HMR during the design iteration loop.
+- **Fidelity:** UI elements are injected cleanly into the host page's DOM via isolated shadow/high-z-index containers to prevent CSS bleed from host sites.
+
+---
+
+## ✦ Running the Project
+
+For design engineers looking to iterate on the component library or extend the masking logic:
+
+1. **Clone & Install:**
    ```bash
    git clone https://github.com/Anxthu/FixTheFlow.git
    cd FixTheFlow
-   ```
-
-2. **Install dependencies:**
-   ```bash
    npm install
    ```
 
-3. **Build the extension:**
+2. **Compile the Artifacts:**
    ```bash
    npm run build
    ```
-   *Note: For hot-module replacement (HMR) during active development, you can use `npm run dev`.*
+   *(Use `npm run dev` for Vite's HMR server).*
 
-4. **Load into Chrome:**
-   - Open Google Chrome and navigate to `chrome://extensions/`.
-   - Enable **Developer mode** (toggle in the top right corner).
-   - Click **Load unpacked**.
-   - Select the `dist` folder generated inside the `FixTheFlow` directory.
-
----
-
-## 📖 How to Use
-
-1. **Launch Setup:** Click the FixTheFlow extension icon in your Chrome toolbar.
-2. **Configure:** Toggle microphone access from the Pre-Setup Modal.
-3. **Mask Data:** During the "Setup" phase, click on any sensitive information on the web page. The extension will automatically apply a secure blur.
-4. **Record:** Click the red **Start Recording** button in the floating Setup Bar.
-5. **Control:** Use the draggable frosted-glass toolbar to toggle drawing modes or stop the recording.
-6. **Download:** Once stopped, a Friction Report overlay will appear, allowing you to instantly download your secure `.webm` file.
-
----
-
-## 🎨 Design Philosophy
-
-FixTheFlow strictly adheres to a premium, Apple-inspired aesthetic (`DESIGN.md`):
-- **Typography:** Relies heavily on the `SF Pro Display` and `SF Pro Text` rhythm with negative letter-spacing for a tight, professional cadence.
-- **Color Palette:** Pure white canvases (`#ffffff`), off-white parchments (`#f5f5f7`), and stark contrast inks (`#1d1d1f`).
-- **Interactive Elements:** Universal "Action Blue" (`#0066cc`) for primary actions, with destructive or recording actions utilizing a stark Red (`#ff3b30`).
-- **Elevation:** Flat design with hairline borders (`#e0e0e0`) and heavy reliance on CSS `backdrop-filter: blur(20px)` for floating elements.
+3. **Deploy Locally:**
+   - Navigate to `chrome://extensions/` in Chromium.
+   - Toggle **Developer mode**.
+   - Select **Load unpacked** and target the generated `/dist` directory.
 
 ---
 
 <div align="center">
-  <i>Built with ❤️ for frictionless, secure workflows.</i>
+  <p><i>Crafted with intention. Designed for flow.</i></p>
 </div>
