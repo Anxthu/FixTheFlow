@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "FixTheFlow",
+  "version": "1.0.0",
+  "description": "The Friction Finder - Capture and share UI/UX issues privately.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabCapture",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background.ts",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Capture UI Friction"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.ts"]
+    }
+  ],
+  "commands": {
+    "capture-friction": {
+      "suggested_key": {
+        "default": "Alt+Shift+F",
+        "mac": "Alt+Shift+F"
+      },
+      "description": "Capture UI Friction"
+    }
+  }
+}
