@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Square, Pen, GripHorizontal } from '@lucide/svelte';
+  import { Square, Pen } from '@lucide/svelte';
 
   let isDrawing = $state(false);
   let toolbarElement: HTMLElement | null = null;
@@ -50,8 +50,18 @@
     if (!isDragging || !toolbarElement) return;
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    toolbarElement.style.left = `${initialLeft + dx}px`;
-    toolbarElement.style.top = `${initialTop + dy}px`;
+    
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+    
+    // Bounds prevention
+    const rect = toolbarElement.getBoundingClientRect();
+    const margin = 12;
+    newLeft = Math.max(margin, Math.min(newLeft, window.innerWidth - rect.width - margin));
+    newTop = Math.max(margin, Math.min(newTop, window.innerHeight - rect.height - margin));
+
+    toolbarElement.style.left = `${newLeft}px`;
+    toolbarElement.style.top = `${newTop}px`;
   }
 
   function onDragEnd() {
@@ -65,7 +75,14 @@
   <div class="toolbar">
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="drag-handle" onmousedown={onDragStart}>
-      <GripHorizontal size={16} />
+      <div class="custom-grip">
+        <div class="grip-dot"></div>
+        <div class="grip-dot"></div>
+        <div class="grip-dot"></div>
+        <div class="grip-dot"></div>
+        <div class="grip-dot"></div>
+        <div class="grip-dot"></div>
+      </div>
     </div>
 
     <div class="recording-indicator">
@@ -121,9 +138,27 @@
     transition: background 0.2s, color 0.2s;
   }
 
+  .custom-grip {
+    display: grid;
+    grid-template-columns: repeat(2, 3px);
+    gap: 3px;
+    padding: 2px;
+  }
+
+  .grip-dot {
+    width: 3px;
+    height: 3px;
+    background-color: #8E8E93;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+  }
+
   .drag-handle:hover {
     background: #2A2A32;
-    color: #F5F5F7;
+  }
+
+  .drag-handle:hover .grip-dot {
+    background-color: #F5F5F7;
   }
 
   .drag-handle:active {

@@ -2,10 +2,19 @@ import { mount, unmount } from 'svelte';
 import Overlay from './components/Overlay.svelte';
 import Toolbar from './components/Toolbar.svelte';
 import SetupBar from './components/SetupBar.svelte';
+import SetupSidebar from './components/SetupSidebar.svelte';
 
 let recording = false;
 let isSetupMode = false;
-let masks: HTMLElement[] = [];
+
+type MaskData = {
+  id: string;
+  name: string;
+  maskDiv: HTMLElement;
+  originalElement: HTMLElement;
+};
+
+let masks: MaskData[] = [];
 let currentMaskedCount = 0;
 
 let toolbarContainer: HTMLElement | null = null;
@@ -13,6 +22,9 @@ let toolbarComponent: any = null;
 
 let setupBarContainer: HTMLElement | null = null;
 let setupBarComponent: any = null;
+
+let setupSidebarContainer: HTMLElement | null = null;
+let setupSidebarComponent: any = null;
 
 let drawingCanvas: HTMLCanvasElement | null = null;
 let ctx: CanvasRenderingContext2D | null = null;
@@ -24,6 +36,20 @@ let lastY = 0;
 // Hover logic for setup mode
 let hoverHighlight: HTMLElement | null = null;
 
+// --- CSS for Animations ---
+const styleTag = document.createElement('style');
+styleTag.innerHTML = `
+  @keyframes fixtheflowPopIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    50% { transform: scale(1.02); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .fixtheflow-pop-in {
+    animation: fixtheflowPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+`;
+document.head.appendChild(styleTag);
+
 chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
   if (message.action === 'ENTER_SETUP') {
     if (isSetupMode || recording) return;
@@ -32,7 +58,7 @@ chrome.runtime.onMessage.addListener((message: any, sender: chrome.runtime.Messa
     // Auto blur fields
     applyAutoMasks();
     
-    // Show Setup bar
+    // Show Setup bar and sidebar
     showSetupBar();
     
     // Enable manual blurring
@@ -154,8 +180,35 @@ function teardownDrawingCanvas() {
 }
 
 // -- Masking Logic --
+function getElementName(el: HTMLElement): string {
+  if (el.tagName === 'INPUT') return `Input (${(el as HTMLInputElement).type || 'text'})`;
+  if (el.tagName === 'IMG') return 'Image';
+  if (el.tagName === 'A') return 'Link';
+  if (el.tagName === 'BUTTON') return 'Button';
+  if (el.id) return `Div (#${el.id})`;
+  if (el.className && typeof el.className === 'string') return `Div (.${el.className.split(' ')[0]})`;
+  return 'Element';
+}
+
+function broadcastMasks() {
+  const safeMasks = masks.map(m => ({ id: m.id, name: m.name }));
+  window.dispatchEvent(new CustomEvent('FIXTHEFLOW_MASKS_UPDATED', { detail: { masks: safeMasks } }));
+}
+
+window.addEventListener('FIXTHEFLOW_UNDO_MASK', (e: any) => {
+  const id = e.detail.id;
+  const index = masks.findIndex(m => m.id === id);
+  if (index !== -1) {
+    const mask = masks[index];
+    mask.maskDiv.remove();
+    delete mask.originalElement.dataset.fixtheflowMasked;
+    masks.splice(index, 1);
+    currentMaskedCount = masks.length;
+    broadcastMasks();
+  }
+});
+
 function applyAutoMasks() {
-  // Expanded selectors
   const selectors = [
     'input[type="password"]',
     'input[type="email"]',
@@ -167,33 +220,41 @@ function applyAutoMasks() {
   ].join(', ');
   
   const sensitiveElements = document.querySelectorAll(selectors);
-  
   sensitiveElements.forEach((el) => {
     applyMaskToElement(el as HTMLElement);
   });
 }
 
 function applyMaskToElement(el: HTMLElement) {
-  // Prevent double masking
   if (el.dataset.fixtheflowMasked) return;
   el.dataset.fixtheflowMasked = 'true';
 
   const rect = el.getBoundingClientRect();
-  const mask = document.createElement('div');
-  mask.style.position = 'absolute';
-  mask.style.top = `${rect.top + window.scrollY}px`;
-  mask.style.left = `${rect.left + window.scrollX}px`;
-  mask.style.width = `${rect.width}px`;
-  mask.style.height = `${rect.height}px`;
-  mask.style.backdropFilter = 'blur(12px)';
-  mask.style.backgroundColor = 'rgba(255,255,255,0.1)';
-  mask.style.zIndex = '2147483644';
-  mask.style.borderRadius = getComputedStyle(el).borderRadius || '6px';
-  mask.style.pointerEvents = 'none'; // so clicks pass through if needed
+  const maskDiv = document.createElement('div');
+  maskDiv.style.position = 'absolute';
+  maskDiv.style.top = `${rect.top + window.scrollY}px`;
+  maskDiv.style.left = `${rect.left + window.scrollX}px`;
+  maskDiv.style.width = `${rect.width}px`;
+  maskDiv.style.height = `${rect.height}px`;
+  maskDiv.style.backdropFilter = 'blur(12px)';
+  maskDiv.style.backgroundColor = 'rgba(255,255,255,0.1)';
+  maskDiv.style.zIndex = '2147483644';
+  maskDiv.style.borderRadius = getComputedStyle(el).borderRadius || '6px';
+  maskDiv.style.pointerEvents = 'none';
+  maskDiv.classList.add('fixtheflow-pop-in');
   
-  document.body.appendChild(mask);
-  masks.push(mask);
+  document.body.appendChild(maskDiv);
+  
+  const id = Math.random().toString(36).substring(2, 9);
+  masks.push({
+    id,
+    name: getElementName(el),
+    maskDiv,
+    originalElement: el
+  });
   currentMaskedCount = masks.length;
+  
+  broadcastMasks();
 }
 
 // -- Manual Masking Hover Logic --
@@ -201,7 +262,7 @@ function enableManualMasking() {
   hoverHighlight = document.createElement('div');
   hoverHighlight.style.position = 'absolute';
   hoverHighlight.style.pointerEvents = 'none';
-  hoverHighlight.style.border = '2px dashed #007AFF';
+  hoverHighlight.style.border = '2px dashed rgba(0, 122, 255, 0.8)';
   hoverHighlight.style.backgroundColor = 'rgba(0, 122, 255, 0.1)';
   hoverHighlight.style.zIndex = '2147483646';
   hoverHighlight.style.display = 'none';
@@ -229,8 +290,7 @@ function handleHover(e: MouseEvent) {
     return;
   }
 
-  // Ignore extension UI
-  if (target.closest('#fixtheflow-setup-bar') || target.closest('#fixtheflow-toolbar')) {
+  if (target.closest('#fixtheflow-setup-bar') || target.closest('#fixtheflow-setup-sidebar')) {
     hoverHighlight.style.display = 'none';
     return;
   }
@@ -249,22 +309,25 @@ function handleClick(e: MouseEvent) {
   const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement;
   if (!target) return;
 
-  // If clicking setup bar, let it pass
-  if (target.closest('#fixtheflow-setup-bar')) return;
+  // Let clicks pass if they hit our UI
+  if (target.closest('#fixtheflow-setup-bar') || target.closest('#fixtheflow-setup-sidebar')) {
+    return;
+  }
 
   e.preventDefault();
   e.stopPropagation();
 
   if (target !== document.body && target !== document.documentElement) {
     applyMaskToElement(target);
+    // Hide hover highlight immediately after click
+    if (hoverHighlight) hoverHighlight.style.display = 'none';
   }
 }
 
 function cleanupMasks() {
-  masks.forEach(m => m.remove());
+  masks.forEach(m => m.maskDiv.remove());
   masks = [];
   currentMaskedCount = 0;
-  // Remove data attributes
   document.querySelectorAll('[data-fixtheflow-masked]').forEach(el => {
     delete (el as HTMLElement).dataset.fixtheflowMasked;
   });
@@ -275,8 +338,15 @@ function showSetupBar() {
   setupBarContainer = document.createElement('div');
   setupBarContainer.id = 'fixtheflow-setup-bar';
   document.body.appendChild(setupBarContainer);
-
   setupBarComponent = mount(SetupBar, { target: setupBarContainer });
+
+  setupSidebarContainer = document.createElement('div');
+  setupSidebarContainer.id = 'fixtheflow-setup-sidebar';
+  document.body.appendChild(setupSidebarContainer);
+  setupSidebarComponent = mount(SetupSidebar, { target: setupSidebarContainer });
+  
+  // Send initial masks to Sidebar
+  broadcastMasks();
 }
 
 function hideSetupBar() {
@@ -284,6 +354,11 @@ function hideSetupBar() {
   if (setupBarContainer) setupBarContainer.remove();
   setupBarComponent = null;
   setupBarContainer = null;
+
+  if (setupSidebarComponent) unmount(setupSidebarComponent);
+  if (setupSidebarContainer) setupSidebarContainer.remove();
+  setupSidebarComponent = null;
+  setupSidebarContainer = null;
 }
 
 function showToolbar() {
